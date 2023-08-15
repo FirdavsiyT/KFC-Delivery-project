@@ -1,0 +1,869 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+{% load humanize %}
+
+
+<style>
+    #catalog {
+        float: left;
+        width: 300px;
+        margin-top: 50px;
+        margin-left: 30px;
+    }
+
+    #catalog h2 {
+        color: black;
+        font-family: Arial Black, Helvetica, sans-serif;
+        font-size: 50px;
+    }
+
+    #catalog a {
+        color: black;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    #catalog a:hover {
+        color: grey;
+    }
+
+    #content {
+        margin-left: 320px;
+    }
+
+    body{
+        background-color: rgb(245,244,242);
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    h1 {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .item a {
+        color: black;
+    }
+
+    .wrapper {
+        margin-top: 0px;
+        margin-bottom: 50px;
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .buttons-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .item {
+        background-color: white;
+        border: 1px solid;
+        border-radius: 25px;
+        border-color: white;
+        box-shadow: 0px 5px 10px #212121;
+        width: 400px;
+        height: 530px;
+        margin: 15px;
+        display: inline-block;
+        position: relative;
+        margin-bottom: 10px;
+        margin-top: 80px;
+    }
+
+    .button button {
+        background-color: #FFD700;
+        border: none;
+        color: white;
+        padding: 19px 0px;
+        height: 100px;
+        width: 350px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 40px;
+        border-radius: 20px;
+        position: absolute;
+        color: black;
+        top: 475px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .button button:hover{
+        border: 5px solid black;
+    }
+
+    #catalog hr {
+        border: none;
+        border-top: 3px solid black;
+    }
+
+    img {
+        border: 1px solid;
+        border-radius: 10px;
+        border-color: white;
+    }
+
+    .url_menu a {
+        color: red;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    }
+
+    .url_menu a:hover {
+        color: red;
+    }
+</style>
+<img src="https://pbs.twimg.com/profile_banners/2793340550/1496427800/1500x500" height="700" width="100%">
+<br><br>
+<div id="catalog">
+    <h2>Меню</h2>
+    <hr>
+    <ul>
+        {% if new %}
+        <a style="color: red;" href="#Новинки">
+            Новинки ({{new.all.count}})
+        </a>
+        <ul>
+            {% endif %}
+            {% for category in category %}
+            <ul><a class="active" href="#{{category.title}}">
+                    {{category.title}}
+                </a></ul>
+            {% endfor %}
+            <hr>
+</div>
+<div id="content">
+    {% if new %}
+    <div id="Новинки">
+        <center>
+            <h1>
+                Новинки
+            </h1>
+        </center>
+    </div>
+    {% endif %}
+    <div class="container">
+        <div class="wrapper">
+            {% for i in new %}
+            <div class="item">
+                <a href="{% url 'products:detail' pk=i.pk %}">
+                    <img src="{{i.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                </a>
+                <center>
+                    <br>
+                    <a href="{% url 'products:detail' pk=i.pk %}">
+                        <h2>{{i.title}}</h2>
+                    </a>
+                    <br>
+                    <div class="button">
+                        <!-- Кнопка запуска модального окна -->
+                        <button type="button" data-toggle="modal" data-target="#ModalFood{{i.id}}">
+                            {{i.price|floatformat:"-1"|intcomma}} сум
+                        </button>
+                    </div>
+
+                    <!-- Модальное окно -->
+                    <div class="modal fade" id="ModalFood{{i.id}}" tabindex="-1" role="dialog"
+                        aria-labelledby="ModalFood{{i.id}}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable role=" document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">{{i.title}}</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img src="{{i.image.url}}">
+                                    <hr>
+                                    <h3>Описание</h3><br>
+                                    <p style="text-align: left;">
+                                        {{i.ru_description}}<br><br>
+                                        {{i.uz_description}}
+                                    </p>
+                                    <h3>
+                                        Цена: {{i.price|floatformat:"-1"|intcomma}} сум
+                                    </h3>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" style="background-color: red; border-color: red;"
+                                        class="btn btn-secondary" data-dismiss="modal">Назад</button>
+                                    <div class="btn btn-primary" style="background-color: green; border-color: green;">
+                                        <a style="color: white;"
+                                            href="{% url 'products:add_to_cart' product_id=i.id %}">
+                                            Добавить в корзину
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </center>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="Бургеры">
+        <h1>
+            <center>
+                Бургеры
+            </center>
+        </h1>
+        <div class="wrapper">
+            {% for food in food %}
+            {% if food.category.title == "Бургеры" %}
+            <div class="item">
+                <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                <center>
+                    <br>
+                    <h2>{{food.title}}</h2>
+                    <br>
+                    <div class="button">
+                        <!-- Кнопка запуска модального окна -->
+                        <button type="button" data-toggle="modal" data-target="#ModalFood{{food.pk}}">
+                            {{food.price|floatformat:"-1"|intcomma}} сум
+                        </button>
+                    </div>
+
+                    <!-- Модальное окно -->
+                    <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                        aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img src="{{food.image.url}}">
+                                    <hr>
+                                    <h3>Описание</h3>
+                                    <br>
+                                    <p style="text-align: left;">
+                                        {{food.ru_description}}<br><br>
+                                        {{food.uz_description}}
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" style="background-color: red; border-color: red;"
+                                        class="btn btn-secondary" data-dismiss="modal">Назад</button>
+                                    <div class="btn btn-primary" style="background-color: green; border-color: green;">
+                                        <a style="color: white;"
+                                            href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                            Добавить в корзину
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </center>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div id="Ланчбоксы">
+            <h1>
+                <center>
+                    Ланчбоксы
+                </center>
+            </h1>
+            <div class="wrapper">
+                {% for food in food %}
+                {% if food.category.title == "Ланчбоксы" %}
+                <div class="item">
+                    <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                    <center>
+                        <br>
+                        <h2>{{food.title}}</h2>
+                        <br>
+                        <div class="button">
+                            <!-- Кнопка запуска модального окна -->
+                            <button type="button" data-toggle="modal" data-target="#ModalFood{{food.pk}}">
+                                {{food.price|floatformat:"-1"|intcomma}} сум
+                            </button>
+                        </div>
+
+                        <!-- Модальное окно -->
+                        <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                            aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="{{food.image.url}}">
+                                        <hr>
+                                        <h3>Описание</h3>
+                                        <br>
+                                        <p style="text-align: left;">
+                                            {{food.ru_description}}<br><br>
+                                            {{food.uz_description}}
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" style="background-color: red; border-color: red;"
+                                            class="btn btn-secondary" data-dismiss="modal">Назад</button>
+                                        <div class="btn btn-primary"
+                                            style="background-color: green; border-color: green;">
+                                            <a style="color: white;"
+                                                href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                Добавить в корзину
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </center>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="Баскеты">
+                <h1>
+                    <center>
+                        Баскеты
+                    </center>
+                </h1>
+                <div class="wrapper">
+                    {% for food in food %}
+                    {% if food.category.title == "Баскеты" %}
+                    <div class="item">
+                        <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                        <center>
+                            <br>
+                            <h2>{{food.title}}</h2>
+                            <br>
+                            <div class="button">
+                                <!-- Кнопка запуска модального окна -->
+                                <button type="button" data-toggle="modal" data-target="#ModalFood{{food.pk}}">
+                                    {{food.price|floatformat:"-1"|intcomma}} сум
+                                </button>
+                            </div>
+
+                            <!-- Модальное окно -->
+                            <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <img src="{{food.image.url}}">
+                                            <hr>
+                                            <h3>Описание</h3>
+                                            <br>
+                                            <p style="text-align: left;">
+                                                {{food.ru_description}}<br><br>
+                                                {{food.uz_description}}
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" style="background-color: red; border-color: red;"
+                                                class="btn btn-secondary" data-dismiss="modal">Назад</button>
+                                            <div class="btn btn-primary"
+                                                style="background-color: green; border-color: green;">
+                                                <a style="color: white;"
+                                                    href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                    Добавить в корзину
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </center>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div id="Твистеры">
+                    <h1>
+                        <center>
+                            Твистеры
+                        </center>
+                    </h1>
+                    <div class="wrapper">
+                        {% for food in food %}
+                        {% if food.category.title == "Твистеры" %}
+                        <div class="item">
+                            <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                            <center>
+                                <br>
+                                <h2>{{food.title}}</h2>
+                                <br>
+                                <div class="button">
+                                    <!-- Кнопка запуска модального окна -->
+                                    <button type="button" data-toggle="modal" data-target="#ModalFood{{food.pk}}">
+                                        {{food.price|floatformat:"-1"|intcomma}} сум
+                                    </button>
+                                </div>
+
+                                <!-- Модальное окно -->
+                                <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                    aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img src="{{food.image.url}}">
+                                                <hr>
+                                                <h3>Описание</h3>
+                                                <br>
+                                                <p style="text-align: left;">
+                                                    {{food.ru_description}}<br><br>
+                                                    {{food.uz_description}}
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" style="background-color: red; border-color: red;"
+                                                    class="btn btn-secondary" data-dismiss="modal">Назад</button>
+                                                <div class="btn btn-primary"
+                                                    style="background-color: green; border-color: green;">
+                                                    <a style="color: white;"
+                                                        href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                        Добавить в корзину
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </center>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div id="Сочная курица">
+                        <h1>
+                            <center>
+                                Сочная курица
+                            </center>
+                        </h1>
+                        <div class="wrapper">
+                            {% for food in food %}
+                            {% if food.category.title == "Сочная курица" %}
+                            <div class="item">
+                                <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                                <center>
+                                    <br>
+                                    <h2>{{food.title}}</h2>
+                                    <br>
+                                    <div class="button">
+                                        <!-- Кнопка запуска модального окна -->
+                                        <button type="button" data-toggle="modal" data-target="#ModalFood{{food.pk}}">
+                                            {{food.price|floatformat:"-1"|intcomma}} сум
+                                        </button>
+                                    </div>
+
+                                    <!-- Модальное окно -->
+                                    <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                        aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <img src="{{food.image.url}}">
+                                                    <hr>
+                                                    <h3>Описание</h3>
+                                                    <br>
+                                                    <p style="text-align: left;">
+                                                        {{food.ru_description}}<br><br>
+                                                        {{food.uz_description}}
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                        style="background-color: red; border-color: red;"
+                                                        class="btn btn-secondary" data-dismiss="modal">Назад</button>
+                                                    <div class="btn btn-primary"
+                                                        style="background-color: green; border-color: green;">
+                                                        <a style="color: white;"
+                                                            href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                            Добавить в корзину
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </center>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div id="Холодные напитки">
+                            <h1>
+                                <center>
+                                    Холодные напитки
+                                </center>
+                            </h1>
+                            <div class="wrapper">
+                                {% for food in food %}
+                                {% if food.category.title == "Холодные напитки" %}
+                                <div class="item">
+                                    <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                                    <center>
+                                        <br>
+                                        <h2>{{food.title}}</h2>
+                                        <br>
+                                        <div class="button">
+                                            <!-- Кнопка запуска модального окна -->
+                                            <button type="button" data-toggle="modal"
+                                                data-target="#ModalFood{{food.pk}}">
+                                                {{food.price|floatformat:"-1"|intcomma}} сум
+                                            </button>
+                                        </div>
+
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                            aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img src="{{food.image.url}}">
+                                                        <hr>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button"
+                                                            style="background-color: red; border-color: red;"
+                                                            class="btn btn-secondary"
+                                                            data-dismiss="modal">Назад</button>
+                                                        <div class="btn btn-primary"
+                                                            style="background-color: green; border-color: green;">
+                                                            <a style="color: white;"
+                                                                href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                                Добавить в корзину
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </center>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div id="Снэки">
+                                <h1>
+                                    <center>
+                                        Снэки
+                                    </center>
+                                </h1>
+                            </div>
+                            <div class="wrapper">
+                                {% for food in food %}
+                                {% if food.category.title == "Снэки" %}
+                                <div class="item">
+                                    <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                                    <center>
+                                        <br>
+                                        <h2>{{food.title}}</h2>
+                                        <br>
+                                        <div class="button">
+                                            <!-- Кнопка запуска модального окна -->
+                                            <button type="button" data-toggle="modal"
+                                                data-target="#ModalFood{{food.pk}}">
+                                                {{food.price|floatformat:"-1"|intcomma}} сум
+                                            </button>
+                                        </div>
+
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                            aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img src="{{food.image.url}}">
+                                                        <hr>
+                                                        <h3>Описание</h3>
+                                                        <br>
+                                                        <p style="text-align: left;">
+                                                            {{food.ru_description}}<br><br>
+                                                            {{food.uz_description}}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button"
+                                                            style="background-color: red; border-color: red;"
+                                                            class="btn btn-secondary"
+                                                            data-dismiss="modal">Назад</button>
+                                                        <div class="btn btn-primary"
+                                                            style="background-color: green; border-color: green;">
+                                                            <a style="color: white;"
+                                                                href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                                Добавить в корзину
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </center>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div id="Соусы">
+                                <h1>
+                                    <center>
+                                        Соусы
+                                    </center>
+                                </h1>
+                            </div>
+                            <div class="wrapper">
+                                {% for food in food %}
+                                {% if food.category.title == "Соусы" %}
+                                <div class="item">
+                                    <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                                    <center>
+                                        <br>
+                                        <h2>{{food.title}}</h2>
+                                        <br>
+                                        <div class="button">
+                                            <!-- Кнопка запуска модального окна -->
+                                            <button type="button" data-toggle="modal"
+                                                data-target="#ModalFood{{food.pk}}">
+                                                {{food.price|floatformat:"-1"|intcomma}} сум
+                                            </button>
+                                        </div>
+
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                            aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img src="{{food.image.url}}">
+                                                        <hr>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button"
+                                                            style="background-color: red; border-color: red;"
+                                                            class="btn btn-secondary"
+                                                            data-dismiss="modal">Назад</button>
+                                                        <div class="btn btn-primary"
+                                                            style="background-color: green; border-color: green;">
+                                                            <a style="color: white;"
+                                                                href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                                Добавить в корзину
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </center>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div id="Горячие напитки">
+                                <h1>
+                                    <center>
+                                        Горячие напитки
+                                    </center>
+                                </h1>
+                            </div>
+                            <div class="wrapper">
+                                {% for food in food %}
+                                {% if food.category.title == "Горячие напитки" %}
+                                <div class="item">
+                                    <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                                    <center>
+                                        <br>
+                                        <h2>{{food.title}}</h2>
+                                        <br>
+                                        <div class="button">
+                                            <!-- Кнопка запуска модального окна -->
+                                            <button type="button" data-toggle="modal"
+                                                data-target="#ModalFood{{food.pk}}">
+                                                {{food.price|floatformat:"-1"|intcomma}} сум
+                                            </button>
+                                        </div>
+
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                            aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img src="{{food.image.url}}">
+                                                        <hr>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button"
+                                                            style="background-color: red; border-color: red;"
+                                                            class="btn btn-secondary"
+                                                            data-dismiss="modal">Назад</button>
+                                                        <div class="btn btn-primary"
+                                                            style="background-color: green; border-color: green;">
+                                                            <a style="color: white;"
+                                                                href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                                Добавить в корзину
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </center>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div id="Десерты">
+                                <h1>
+                                    <center>
+                                        Десерты
+                                    </center>
+                                </h1>
+                            </div>
+                            <div class="wrapper">
+                                {% for food in food %}
+                                {% if food.category.title == "Десерты" %}
+                                <div class="item">
+                                    <img src="{{food.image.url}}" alt="Картинка грузится" width='399px' height="315px">
+                                    <center>
+                                        <br>
+                                        <h2>{{food.title}}</h2>
+                                        <br>
+                                        <div class="button">
+                                            <!-- Кнопка запуска модального окна -->
+                                            <button type="button" data-toggle="modal"
+                                                data-target="#ModalFood{{food.pk}}">
+                                                {{food.price|floatformat:"-1"|intcomma}} сум
+                                            </button>
+                                        </div>
+
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" id="ModalFood{{food.pk}}" tabindex="-1" role="dialog"
+                                            aria-labelledby="ModalFood{{food.pk}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" id="myModalLabel">{{food.title}}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img src="{{food.image.url}}">
+                                                        <hr>
+                                                        <h3>Описание</h3>
+                                                        <br>
+                                                        <p style="text-align: left;">
+                                                            {{food.ru_description}}<br><br>
+                                                            {{food.uz_description}}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button"
+                                                            style="background-color: red; border-color: red;"
+                                                            class="btn btn-secondary"
+                                                            data-dismiss="modal">Назад</button>
+                                                        <div class="btn btn-primary"
+                                                            style="background-color: green; border-color: green;">
+                                                            <a style="color: white;"
+                                                                href="{% url 'products:add_to_cart' product_id=food.id %}">
+                                                                Добавить в корзину
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </center>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <br><br><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('.button');
+    const menu = document.querySelector('#catalog');
+    const menuTop = menu.offsetTop;
+
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset >= menuTop) {
+            menu.style.position = 'fixed';
+            menu.style.top = '0';
+        } else {
+            menu.style.position = 'static';
+        }
+    });
+</script>
+{% endblock %}

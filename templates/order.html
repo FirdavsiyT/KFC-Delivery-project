@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+{% load humanize %}
+<style>
+    .button {
+        background-color: red;
+        border: none;
+        color: white;
+        padding: 15px 50px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 30px;
+        border-radius: 12px;
+    }
+
+    .button:hover {
+        border: 5px solid;
+        border-color: black;
+    }
+
+    .button a {
+        color: white;
+        font-family: Arial Black, Helvetica, sans-serif;
+    }
+
+    .button a:hover {
+        color: white
+    }
+
+    hr {
+        border: none;
+        border-top: 3px solid black;
+    }
+</style>
+<div class="container">
+    <center>
+        <h1 style="font-family: Arial Black, Helvetica, sans-serif;">Заказ №{{order.id}}</h1>
+    </center>
+    {% for key, value in STATUS_CHOICES %}
+    {% if order.status == key %}
+    <h2 style="text-align: center; color: red; font-size: 20px; font-family: Arial Black, Helvetica, sans-serif;">Статус
+        заказа {{ value }}</h2>
+    <hr>
+    {% endif %}
+    {% endfor %}
+    <h3 style="font-family: Arial Black, Helvetica, sans-serif; text-align: center;">Корзина</h3>
+    <br><br>
+    {% for cartitem in cart_items %}
+    <div class="row mb-4 d-flex justify-content-between align-items-center">
+        <div class="col-md-2 col-lg-2 col-xl-2">
+            <img src="{{cartitem.product.image.url}}" class="img-fluid rounded-3" alt="Cotton T-shirt">
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-3">
+            <h6 class="text-muted">{{cartitem.product.category}}</h6>
+            <h6 class="text-black mb-0">{{cartitem.product.title}}</h6>
+        </div>
+        <a>x{{cartitem.quantity}}</a>
+        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+            <h6 class="mb-0">{{cartitem.product.price|floatformat:"-1"|intcomma}} сум</h6>
+        </div>
+    </div>
+
+
+    {% endfor %}
+    <hr>
+    <h3 style="font-family: Arial Black, Helvetica, sans-serif; text-align: center;">Данные</h3><br>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Адрес</th>
+                <th scope="col">Телефон</th>
+                <th scope="col">Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{order.address}}</td>
+                <td>{{order.phone}}</td>
+                <td>{{ order.get_total_price|floatformat:"-1"|intcomma}} сум</td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    {% if order.status == 'processing' %}
+    <center>
+        <div class="button">
+            <a href="{% url 'products:cart_delete' cart_id=order.id %}">
+                Отменить заказ
+            </a>
+        </div>
+    </center>
+    {% endif %}
+    {% if order.status == 'delivered' %}
+    <h3 style="font-family: Arial Black, Helvetica, sans-serif; text-align: center;">Оставьте пожалуйста отзыв</h3><br>
+    <form style="text-align: center;" method="POST" action="{% url 'products:order_finish' cart_id=order.id %}">
+        {% csrf_token %}
+        <textarea style="height: 200px; width: 600px;" name="review"></textarea><br>
+        <button
+            style="height: 50px; width: 250px; background-color: black; color: white; font-family: Arial, Helvetica, sans-serif; border-radius: 20px;"
+            type="submit">Завершить заказ</button>
+        <br>
+    </form>
+    {% endif %}
+</div>
+<br><br><br><br>
+{% endblock %}

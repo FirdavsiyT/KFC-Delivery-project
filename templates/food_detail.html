@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+{% load humanize %}
+<style>
+    .title h2{
+        font-family: Arial Black, Helvetica, sans-serif;
+    }
+    .description h2{
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .button {
+        background-color: #FFD700;
+        border: none;
+        color: white;
+        padding: 15px 75px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 45px;
+        border-radius: 12px;
+    }
+    .button:hover{
+        border: 5px solid;
+        border-color: black;
+    }
+    .button a{
+        color: black;
+    }
+    .button a:hover{
+        color: black
+    }
+</style>
+
+<div class="container">
+    <br>
+    <center><img src="{{food.image.url}}"></center>
+    <br>
+    <div class="title">
+        <h2>{{food.title}}</h2><br>
+    </div>
+    <h2>
+        <div class="description">
+            <h2>
+                {{food.ru_description}}<br><br>
+                {{food.uz_description}}
+            </h2>
+        </div>
+        <br>
+        <center>
+        <div class="button">
+            <a href="{% url 'products:add_to_cart' product_id=food.id %}">
+                {{food.price|floatformat:"-1"|intcomma}} сум
+            </a>
+        </div>
+        </center>
+    </h2>
+</div>
+<br><br><br>
+{% endblock %}
