@@ -137,6 +137,14 @@
 
                     <div class="mb-5">
                       <div class="form-outline">
+                        <form action="" method="POST">
+                          {% csrf_token %}
+                          <input type="text" name="code" class="form-control form-control-lg">
+                          <label>Введите промокод</label>
+                          <button type="submit" class="btn btn-dark btn-block btn-lg"
+                          data-mdb-ripple-color="dark">Отправить промокод</button>
+                        </form>
+                        <hr class="my-4">
                         <form method="POST" action="{% url 'products:update_cart' cart_id=cart.id %}">
                           {% csrf_token %}
                           <input type="text" name="address" id="form3Examplea2" class="form-control form-control-lg" />

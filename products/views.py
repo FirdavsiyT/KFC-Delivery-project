@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # Create your views here.
 
-
 class FoodListView(ListView):
     model = FoodModel
     template_name = 'menu.html'
@@ -29,6 +28,7 @@ class FoodDetailView(DetailView):
     model = FoodModel
 
 
+#Chopping Cart
 def shoppingcart(request):
     context = {}
     if request.user.is_authenticated:
@@ -112,7 +112,13 @@ def update_cart(request, cart_id):
         cart.save(update_fields=['phone', 'address', 'status', 'total_price'])
         return redirect(reverse('products:order', kwargs={'cart_id': cart_id}))
 
+def cart_delete(request, cart_id):
+    cart = Cart.objects.exclude(status='order').exclude(
+        status='delivered').get(id=cart_id)
+    cart.delete()
+    return redirect('products:menu')
 
+#Orders
 def order(request, cart_id):
     cartitem = CartItem.objects.filter(cart__id=cart_id)
     order = Cart.objects.get(id=cart_id)
@@ -123,13 +129,6 @@ def order(request, cart_id):
         'cart_items': cartitem
     }
     return render(request, template_name='order.html', context=context)
-
-
-def cart_delete(request, cart_id):
-    cart = Cart.objects.exclude(status='order').exclude(
-        status='delivered').get(id=cart_id)
-    cart.delete()
-    return redirect('products:menu')
 
 
 def order_finish(request, cart_id):
